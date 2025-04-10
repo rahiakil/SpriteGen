@@ -9,6 +9,25 @@ def copy_folder_with_timestamp(input_folder):
     new_folder = f"Resized_{timestamp}"
     shutil.copytree(input_folder, new_folder)
     return new_folder
+def resize_images_to_fixed_size(folder, target_size=(340, 340)):
+    """Resize images to a fixed size (16:16 aspect ratio) with a background color."""
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if not filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+            continue
+
+        try:
+            with Image.open(file_path) as img:
+                # Resize the image to the target size (340x340)
+                resized_img = img.resize(target_size, Image.Resampling.LANCZOS)
+
+                # Save the resized image
+                resized_img.save(file_path)
+                print(f"Resized and saved: {file_path}")
+
+        except Exception as e:
+            print(f"Error processing {filename}: {e}")
+
 
 def resize_images_with_background(folder, target_width=340):
     """Resize images to the target width and extend with background color if needed."""
@@ -43,4 +62,4 @@ def resize_images_with_background(folder, target_width=340):
 if __name__ == "__main__":
     input_folder = "OutputCells_Exp1_Correct"  # Replace with your input folder path
     new_folder = copy_folder_with_timestamp(input_folder)
-    resize_images_with_background(new_folder)
+    resize_images_to_fixed_size(new_folder)
